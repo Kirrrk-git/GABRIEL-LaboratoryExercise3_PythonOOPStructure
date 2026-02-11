@@ -8,55 +8,102 @@ class Book:
     def borrow_book(self):
         if self.available:
             self.available = False
-            print("\nYou have successfully borrowed the book.")
+            print("Book borrowed successfully.")
         else:
-            print("\nSorry, the book is currently unavailable.")
+            print("Book is already borrowed.")
 
     def return_book(self):
         if not self.available:
             self.available = True
-            print("\nYou have successfully returned the book.")
+            print("Book returned successfully.")
         else:
-            print("\nThe book is already available in the library.")
-
-    def is_available(self):
-        return self.available
+            print("Book is already available.")
 
     def display_info(self):
-        print("\n--- Book Information ---")
         print("Title:", self.title)
         print("Author:", self.author)
         print("Publication Year:", self.year)
-        if self.available:
-            print("Status: Available")
-        else:
-            print("Status: Borrowed")
+        print("Status:", "Available" if self.available else "Borrowed")
+        print("------------------------")
 
 
 # ----- Main Program -----
-title = input("Enter book title: ")
-author = input("Enter author name: ")
-year = input("Enter publication year: ")
-
-book = Book(title, author, year)
+books = []
 
 while True:
-    print("\nChoose an action:")
-    print("1 - Borrow Book")
-    print("2 - Return Book")
-    print("3 - Display Book Information")
-    print("4 - Exit")
+    print("\n===== Library Menu =====")
+    print("1 - Add Book")
+    print("2 - Borrow Book")
+    print("3 - Return Book")
+    print("4 - Display All Books")
+    print("5 - Exit")
 
     choice = input("Enter your choice: ")
 
     if choice == "1":
-        book.borrow_book()
+        title = input("Enter book title: ")
+        
+        while True:
+            author = input("Enter author name: ")
+            if author.replace(" ", "").isalpha():
+                break
+            else:
+                print("Invalid author name. Please use letters only.")
+
+        while True:
+            year = input("Enter publication year: ")
+            if year.isdigit():
+                break
+            else:
+                print("Invalid year. Please enter numbers only.")
+
+        book = Book(title, author, year)
+        books.append(book)
+        print("Book added successfully.")
+
     elif choice == "2":
-        book.return_book()
+        if not books:
+            print("No books available.")
+        else:
+            for i in range(len(books)):
+                print(i + 1, "-", books[i].title)
+
+            try:
+                num = int(input("Select book number to borrow: ")) - 1
+                if 0 <= num < len(books):
+                    books[num].borrow_book()
+                else:
+                    print("Invalid book number.")
+            except ValueError:
+                print("Please enter a valid number.")
+
     elif choice == "3":
-        book.display_info()
+        if not books:
+            print("No books available.")
+        else:
+            for i in range(len(books)):
+                print(i + 1, "-", books[i].title)
+
+            try:
+                num = int(input("Select book number to return: ")) - 1
+                if 0 <= num < len(books):
+                    books[num].return_book()
+                else:
+                    print("Invalid book number.")
+            except ValueError:
+                print("Please enter a valid number.")
+
     elif choice == "4":
-        print("\nExiting program. Goodbye!")
+        if not books:
+            print("No books added yet.")
+        else:
+            print("\n--- Library Books ---")
+            for book in books:
+                book.display_info()
+
+    elif choice == "5":
+        print("Program terminated.")
         break
+
     else:
-        print("\nInvalid choice. Please try again.")
+        print("Invalid choice. Please select from the menu.")
